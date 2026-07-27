@@ -35,4 +35,55 @@ def print_info(url, wordlist_path, threads, total):
  {RESET}{'-' * 60}
     """)
 
-    
+# This is the main scan function
+def run_scan(url_template, wordlist_path, threads=40, output=None, timeout=20):
+
+    # Checks to see if the word FUZZ is in the url
+    if "FUZZ" not in url_template:
+        raise ValueError("url_template must contain FUZZ, e.g. FUZZ.example.com")
+
+    # Calls the function to load the wordlist and counts how many words are in the list(total)_
+    words = load_wordlist(wordlist_path)
+    total = len(words)
+    # Calls the print_info function so the user can see whats about to run
+    print_info(url_template, wordlist_path, threads, total)
+
+    found = []
+    done=0
+    start = time.time()
+
+    def worker(word):
+        # Swaps the word FUZZ with the word(s) in the wordlist and returns both values at once(hostname and timeout)
+        hostname = url_template.replace("FUZZ", word)
+        return hostname, dns_lookup(hostname, timeout)
+
+    # Creates a pool of workers and tells the worker to not wait for job to finish on another thread. Assign it to a thread as soon as one is free
+    with ThreadPoolExecutor(max_workers=threads) as executer:
+        futures = [executer.submit(worker, w) for w in words]
+
+        for future in as_completed(futures):
+            hostname, ip = future.result()
+            with print_lock:
+                done += 1
+                if ip:
+                    found.append((hostname, ip))
+                    sys.stdout.write("\r" + " " * 60 + "\r")
+                    print(f"{GREEN}{hostname:<40}{RESET} [FOUND: {ip}]")
+                    print("\n")
+                sys.stdout.write(f"\r{YELLOW}:: Progress: [{done}/{total}]{RESET}")
+                sys.stdout.flush()
+
+    elapsed = time.time() - start
+    print(f"\n{'-' * 60}")
+    print(f"{BOLD}:: Done in {elapsed:.2f}s — {len(found)} found{RESET}")
+
+    if output:
+        with open(output, "w") as f:
+            for hostname, ip in found:
+                f.write(f"{hostname} {ip}\n")
+        print(f":: Results saved to {output}")
+
+    return found
+
+if __name__ == "__main__":
+    run_scan("FUZZ.google.com", "core/test_wordlist.txt")                
