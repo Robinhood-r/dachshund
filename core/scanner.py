@@ -57,33 +57,44 @@ def run_scan(url_template, wordlist_path, threads=40, output=None, timeout=20):
         hostname = url_template.replace("FUZZ", word)
         return hostname, dns_lookup(hostname, timeout)
 
-    # Creates a pool of workers and tells the worker to not wait for job to finish on another thread. Assign it to a thread as soon as one is free
+    # Creates a pool of workers and tells the worker to not wait for job to finish on another thread. Assign it to a thread as soon as one is free.
     with ThreadPoolExecutor(max_workers=threads) as executer:
         futures = [executer.submit(worker, w) for w in words]
 
+        print()
+        # It gives us each feature as soon at it finishes,whenever they complete and gets the actual return value from the completed worder function.
         for future in as_completed(futures):
             hostname, ip = future.result()
+            #
             with print_lock:
                 done += 1
                 if ip:
                     found.append((hostname, ip))
                     sys.stdout.write("\r" + " " * 60 + "\r")
                     print(f"{GREEN}{hostname:<40}{RESET} [FOUND: {ip}]")
-                    print("\n")
-                sys.stdout.write(f"\r{YELLOW}:: Progress: [{done}/{total}]{RESET}")
+                
                 sys.stdout.flush()
 
+    
+    # Calculates the the total time taken for the process after all the thread pools are done.
     elapsed = time.time() - start
-    print(f"\n{'-' * 60}")
+
+    print()
+      
+    print(f"{YELLOW}:: Progress: [{done}/{total}]{RESET}")
+    print('-' * 60)
     print(f"{BOLD}:: Done in {elapsed:.2f}s — {len(found)} found{RESET}")
 
+    # Checks to see if the user has provided an output and opens the file in writing mode and writes the results in them
     if output:
         with open(output, "w") as f:
             for hostname, ip in found:
                 f.write(f"{hostname} {ip}\n")
         print(f":: Results saved to {output}")
 
+    # Returns the found list
     return found
 
+# Tests the file 
 if __name__ == "__main__":
-    run_scan("FUZZ.google.com", "core/test_wordlist.txt")                
+    run_scan("FUZZ.google.com", "/run/media/dan/Dev/Github/dachshund/core/test_wordlist.txt")                
