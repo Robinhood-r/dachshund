@@ -6,9 +6,9 @@ from threading import Lock
 
 # Doing a check for errors epending on which way the user tries to use the program
 try:
-    from core.dns_lookup import dns_lookup
+    from core.http_analyzer import dns_lookup
 except ImportError:
-    from dns_lookup import dns_lookup
+    from core.http_analyzer import dns_lookup
 
 
 # Settting ANSI values to color names
@@ -69,11 +69,11 @@ def run_scan(url_template, wordlist_path, threads=40, output=None, timeout=20):
             with print_lock:
                 done += 1
                 if ip:
-                    found.append((hostname, ip))
-                    sys.stdout.write("\r" + " " * 60 + "\r")
-                    print(f"{GREEN}{hostname:<40}{RESET} [FOUND: {ip}]")
+                  found.append((hostname, ip))
+                  sys.stdout.write("\r" + " " * 60 + "\r")
+                  print(f"{GREEN}{hostname:<40}{RESET} [FOUND: {ip}]")
                 sys.stdout.write(f"\r{YELLOW}:: Progress: [{done}/{total}]{RESET}")
-                sys.stdout.flush()            
+                sys.stdout.flush()       
                 
 
     

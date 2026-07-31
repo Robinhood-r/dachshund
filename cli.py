@@ -7,6 +7,7 @@ def main():
         prog="dachshund",
         description="Dachshund - a fast subdomain enumeration tool"
     )
+    
     # Setting the arguments and their requirements
     parser.add_argument("-u", "--url", required=True, help="Target with FUZZ keyword, e.g. FUZZ.example.com")
     parser.add_argument("-w", "--wordlist", required=True, help="Path to wordlist")
