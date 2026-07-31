@@ -72,8 +72,9 @@ def run_scan(url_template, wordlist_path, threads=40, output=None, timeout=20):
                     found.append((hostname, ip))
                     sys.stdout.write("\r" + " " * 60 + "\r")
                     print(f"{GREEN}{hostname:<40}{RESET} [FOUND: {ip}]")
+                sys.stdout.write(f"\r{YELLOW}:: Progress: [{done}/{total}]{RESET}")
+                sys.stdout.flush()            
                 
-                sys.stdout.flush()
 
     
     # Calculates the the total time taken for the process after all the thread pools are done.
@@ -81,8 +82,8 @@ def run_scan(url_template, wordlist_path, threads=40, output=None, timeout=20):
 
     print()
       
-    print(f"{YELLOW}:: Progress: [{done}/{total}]{RESET}")
-    print('-' * 60)
+    
+    print(f"\n{'-' * 60}")
     print(f"{BOLD}:: Done in {elapsed:.2f}s — {len(found)} found{RESET}")
 
     # Checks to see if the user has provided an output and opens the file in writing mode and writes the results in them
