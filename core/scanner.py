@@ -35,7 +35,11 @@ def print_info(url, wordlist_path, threads, total):
     """)
 
 # This is the main scan function
-def run_scan(url_template, wordlist_path, threads=40, output=None, match_codes=[200]):
+def run_scan(url_template, wordlist_path, threads=40, output=None, timeout=5.0, match_codes=None):
+
+    # Checks to see if there is a match code provided 
+    if match_codes is None:
+        match_codes = [200]
 
     # Checks to see if the word FUZZ is in the url
     if "FUZZ" not in url_template:
@@ -54,7 +58,7 @@ def run_scan(url_template, wordlist_path, threads=40, output=None, match_codes=[
     def worker(word):
         # Swaps the word FUZZ with the word(s) in the wordlist and returns both values at once(hostname and timeout)
         url = url_template.replace("FUZZ", word)
-        return url, http_probe(url)
+        return url, http_probe(url, timeout)
 
     # Creates a pool of workers and tells the worker to not wait for job to finish on another thread. Assign it to a thread as soon as one is free.
     with ThreadPoolExecutor(max_workers=threads) as executer:
@@ -78,9 +82,7 @@ def run_scan(url_template, wordlist_path, threads=40, output=None, match_codes=[
     
     # Calculates the the total time taken for the process after all the thread pools are done.
     elapsed = time.time() - start
-
-    print()
-         
+    print()      
     print(f"\n{'-' * 60}")
     print(f"{BOLD}:: Done in {elapsed:.2f}s — {len(found)} found{RESET}")
 
