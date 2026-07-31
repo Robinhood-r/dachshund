@@ -6,10 +6,9 @@ from threading import Lock
 
 # Doing a check for errors epending on which way the user tries to use the program
 try:
-    from core.http_analyzer import dns_lookup
+    from core.http_analyzer import http_probe
 except ImportError:
-    from core.http_analyzer import dns_lookup
-
+    from http_analyzer import http_probe
 
 # Settting ANSI values to color names
 GREEN, YELLOW, CYAN, BOLD, RESET = "\033[92m", "\033[93m", "\033[96m", "\033[1m", "\033[0m"
@@ -36,7 +35,7 @@ def print_info(url, wordlist_path, threads, total):
     """)
 
 # This is the main scan function
-def run_scan(url_template, wordlist_path, threads=40, output=None, timeout=20):
+def run_scan(url_template, wordlist_path, threads=40, output=None, match_codes=[200]):
 
     # Checks to see if the word FUZZ is in the url
     if "FUZZ" not in url_template:
@@ -54,8 +53,8 @@ def run_scan(url_template, wordlist_path, threads=40, output=None, timeout=20):
 
     def worker(word):
         # Swaps the word FUZZ with the word(s) in the wordlist and returns both values at once(hostname and timeout)
-        hostname = url_template.replace("FUZZ", word)
-        return hostname, dns_lookup(hostname, timeout)
+        url = url_template.replace("FUZZ", word)
+        return url, http_probe(url)
 
     # Creates a pool of workers and tells the worker to not wait for job to finish on another thread. Assign it to a thread as soon as one is free.
     with ThreadPoolExecutor(max_workers=threads) as executer:
@@ -64,14 +63,14 @@ def run_scan(url_template, wordlist_path, threads=40, output=None, timeout=20):
         print()
         # It gives us each feature as soon at it finishes,whenever they complete and gets the actual return value from the completed worder function.
         for future in as_completed(futures):
-            hostname, ip = future.result()
-            #
+            url, status_code = future.result()
+            
             with print_lock:
                 done += 1
-                if ip:
-                  found.append((hostname, ip))
+                if status_code in  match_codes:
+                  found.append((url, status_code))
                   sys.stdout.write("\r" + " " * 60 + "\r")
-                  print(f"{GREEN}{hostname:<40}{RESET} [FOUND: {ip}]")
+                  print(f"{GREEN}{url:<50}{RESET} [{status_code}]")
                 sys.stdout.write(f"\r{YELLOW}:: Progress: [{done}/{total}]{RESET}")
                 sys.stdout.flush()       
                 
@@ -81,16 +80,15 @@ def run_scan(url_template, wordlist_path, threads=40, output=None, timeout=20):
     elapsed = time.time() - start
 
     print()
-      
-    
+         
     print(f"\n{'-' * 60}")
     print(f"{BOLD}:: Done in {elapsed:.2f}s — {len(found)} found{RESET}")
 
     # Checks to see if the user has provided an output and opens the file in writing mode and writes the results in them
     if output:
         with open(output, "w") as f:
-            for hostname, ip in found:
-                f.write(f"{hostname} {ip}\n")
+            for url, status_code in found:
+                f.write(f"{url} {status_code}\n")
         print(f":: Results saved to {output}")
 
     # Returns the found list
@@ -98,4 +96,4 @@ def run_scan(url_template, wordlist_path, threads=40, output=None, timeout=20):
 
 # Tests the file 
 if __name__ == "__main__":
-    run_scan("FUZZ.google.com", "/run/media/dan/Dev/Github/dachshund/core/test_wordlist.txt")                
+    run_scan("https://www.google.com/FUZZ", "/run/media/dan/Dev/SecLists-master/Discovery/Web-Content/raft-medium-words-lowercase.txt")                
