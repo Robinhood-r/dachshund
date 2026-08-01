@@ -4,7 +4,7 @@ from core.scanner import run_scan
 def main():
     # Defines an arguments parser that will read the command line flags
     parser = argparse.ArgumentParser(
-        prog="dachshund",
+        prog="dashi",
         description="Dachshund - sniff out subdomains and paths like a hound!!!"
     )
     
