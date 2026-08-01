@@ -1,0 +1,21 @@
+[project]
+name = "dachshund"
+version = "0.1.0"
+description = "A fast web fuzzer for subdomains and paths"
+requires-python = ">=3.8"
+dependencies = [
+    "requests"
+]
+
+[project.scripts]
+dashi = "cli:main"
+
+[tool.setuptools]
+packages = ["core"]
+py-modules = ["cli"]
+
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+

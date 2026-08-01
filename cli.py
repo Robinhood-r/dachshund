@@ -5,7 +5,7 @@ def main():
     # Defines an arguments parser that will read the command line flags
     parser = argparse.ArgumentParser(
         prog="dachshund",
-        description="Dachshund - a fast subdomain enumeration tool"
+        description="Dachshund - sniff out subdomains and paths like a hound!!!"
     )
     
     # Setting the arguments and their requirements
@@ -20,7 +20,7 @@ def main():
 
     # Checks to see if there is the word FUZZ in the provided url
     if "FUZZ" not in args.url:
-        parser.error("URL must contain FUZZ, e.g. FUZZ.example.com")
+        parser.error("URL must contain FUZZ, e.g. example.com/FUZZ")
 
     # Turn "200,301,403" into [200, 301, 403]
     match_codes = [int(code.strip()) for code in args.match_codes.split(",")]

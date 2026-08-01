@@ -24,10 +24,16 @@ def load_wordlist(path):
 
 # Printing the banner when the program is called
 def print_info(url, wordlist_path, threads, total):
-
-      print(f"""{CYAN}{BOLD}
-        dachshund - subdomain enumeration
- {RESET}{BOLD}
+    print(f"""{CYAN}{BOLD}
+ ██████╗  █████╗  ██████╗██╗  ██╗███████╗██╗  ██╗██╗   ██╗███╗   ██╗██████╗ 
+ ██╔══██╗██╔══██╗██╔════╝██║  ██║██╔════╝██║  ██║██║   ██║████╗  ██║██╔══██╗
+ ██║  ██║███████║██║     ███████║███████╗███████║██║   ██║██╔██╗ ██║██║  ██║
+ ██║  ██║██╔══██║██║     ██╔══██║╚════██║██╔══██║██║   ██║██║╚██╗██║██║  ██║
+ ██████╔╝██║  ██║╚██████╗██║  ██║███████║██║  ██║╚██████╔╝██║ ╚████║██████╔╝
+ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═════╝ 
+{RESET}
+{YELLOW}Enumerate subdomains like a hound!!!{RESET}
+{RESET}{BOLD}
         :: URL       : {url}
         :: Wordlist  : {wordlist_path} ({total} entries)
         :: Threads   : {threads}
