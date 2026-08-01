@@ -41,7 +41,7 @@ It's multi threaded for faster enumeration speed and can save the results of eac
 ## Example output
 
 
-
+![dachshund screenshot](Screenshot.png)
 
 ## Author
 Danial R — Cybersecurity enthusiast and aspiring bug bounty hunter
