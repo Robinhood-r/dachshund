@@ -31,10 +31,15 @@ It's multi threaded for faster enumeration speed and can save the results of eac
 
  ```
 -u   URL to fuzz. Must contain FUZZ, e.g. https://example.com/FUZZ
+
 -w   Path to wordlist
+
 -t   Threads (default: 40)
+
 -o   Save results to a file
+
 --timeout   HTTP timeout in seconds (default: 5.0)
+
 -mc  Comma-separated HTTP status codes to match, e.g. 200,301,403
 ```
 
