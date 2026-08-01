@@ -101,7 +101,3 @@ def run_scan(url_template, wordlist_path, threads=40, output=None, timeout=5.0, 
 
     # Returns the found list
     return found
-
-# Tests the file 
-if __name__ == "__main__":
-    run_scan("https://www.google.com/FUZZ", "/run/media/dan/Dev/SecLists-master/Discovery/Web-Content/raft-medium-words-lowercase.txt")                
